@@ -2,7 +2,7 @@ name: "Release packaging"
 
 on:
   release:
-    type: [published]
+    types: [published]
 
 jobs:
   build:
@@ -24,10 +24,12 @@ jobs:
           yarn build
           mv dist nominatim-ui
           mkdir artifacts
+          export VERSION=${GITREF/*v/}
           tar czf artifacts/nominatim-ui-${VERSION}.tar.gz nominatim-ui
           zip -qr artifacts/nominatim-ui-${VERSION}.zip nominatim-ui
+        shell: bash
         env:
-          VERSION: ${{ github.ref }}
+          GITREF: ${{ github.ref }}
 
 
       - uses: AButler/upload-release-assets@v2.0
