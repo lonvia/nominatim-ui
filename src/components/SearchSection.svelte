@@ -8,10 +8,6 @@
 
   let sViewBox = $state();
 
-  // lat,lon are later set in update_reverse_link()
-  let lat; // eslint-disable-line no-unused-vars
-  let lon; // eslint-disable-line no-unused-vars
-
   function map_viewbox_as_string(map) {
     var bounds = map.getBounds();
     var west = bounds.getWest();
@@ -41,24 +37,16 @@
     }
   }
 
-  function update_reverse_link(map) {
-    let center_lat_lng = map.wrapLatLng(map.getCenter());
-    lat = center_lat_lng.lat.toFixed(5);
-    lon = center_lat_lng.lng.toFixed(5);
-  }
-
   $effect(() => {
     const map = appState.map;
     if (!map) { return; }
 
     map.on('move', function () {
       set_viewbox(map);
-      update_reverse_link(map);
     });
 
     map.on('load', function () {
       set_viewbox(map);
-      update_reverse_link(map);
     });
   });
 
