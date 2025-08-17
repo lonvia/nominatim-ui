@@ -1,7 +1,7 @@
 <script>
   import UrlSubmitForm from '../components/UrlSubmitForm.svelte';
 
-  import { map_store } from '../lib/stores.js';
+  import { appState } from '../AppState.svelte.js';
   import { get } from 'svelte/store';
 
   let { bStructuredSearch = false, api_request_params = {} } = $props();
@@ -47,7 +47,8 @@
     lon = center_lat_lng.lng.toFixed(5);
   }
 
-  map_store.subscribe(map => {
+  $effect(() => {
+    const map = appState.map;
     if (!map) { return; }
 
     map.on('move', function () {
@@ -62,7 +63,7 @@
   });
 
   function reset_viewbox() {
-    let map = get(map_store);
+    const map = appState.map;
     if (map) { set_viewbox(map); }
   }
 

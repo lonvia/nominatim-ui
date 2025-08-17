@@ -4,7 +4,8 @@
   import LastUpdated from './LastUpdated.svelte';
   import Error from './Error.svelte';
 
-  import { map_store, page } from '../lib/stores.js';
+  import { page } from '../lib/stores.js';
+  import { appState } from '../AppState.svelte.js';
 
   let { subheader } = $props();
 
@@ -15,7 +16,8 @@
   let map_lat = $state();
   let map_lon = $state();
 
-  map_store.subscribe(map => {
+  $effect(() => {
+    const map = appState.map;
     if (!map) return;
 
     map.on('move', function () {

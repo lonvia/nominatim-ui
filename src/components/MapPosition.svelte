@@ -1,6 +1,5 @@
 <script>
-
-  import { map_store } from '../lib/stores.js';
+  import { appState } from '../AppState.svelte.js';
 
   let map_center = $state();
   let map_zoom = $state();
@@ -47,8 +46,8 @@
     }
   }
 
-
-  map_store.subscribe(map => {
+  $effect(() => {
+    const map = appState.map;
     if (!map) return;
 
     map.on('move', function () {

@@ -1,10 +1,11 @@
 <script>
-  import { onDestroy } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import UrlSubmitForm from '../components/UrlSubmitForm.svelte';
   import { SvelteURLSearchParams } from 'svelte/reactivity';
 
   import { zoomLevels } from '../lib/helpers.js';
-  import { map_store, refresh_page } from '../lib/stores.js';
+  import { refresh_page } from '../lib/stores.js';
+  import { appState } from '../AppState.svelte.js';
 
   let { lat = '', lon = '', zoom = '', api_request_params = {} } = $props();
 
@@ -18,14 +19,13 @@
     refresh_page('reverse', params);
   }
 
-  const unsubscribe = map_store.subscribe(map => {
-    if (map) {
-      map.on('click', (e) => {
-        let coords = e.latlng.wrap();
-        gotoCoordinates(coords.lat.toFixed(5), coords.lng.toFixed(5));
-      });
-    }
-  });
+  function onMapClick(e) {
+    let coords = e.latlng.wrap();
+    gotoCoordinates(coords.lat.toFixed(5), coords.lng.toFixed(5));
+  }
+
+  $effect(() => { appState.map?.on('click', onMapClick) });
+  onDestroy(() => { appState.map?.off('click', onMapClick) });
 
   // common mistake is to copy&paste latitude and longitude into the 'lat' search box
   function maybeSplitLatitude(e) {
@@ -46,7 +46,6 @@
     gotoCoordinates(lon, lat);
   }
 
-  onDestroy(unsubscribe);
 </script>
 
 {#snippet content()}

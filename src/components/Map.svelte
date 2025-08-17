@@ -6,7 +6,7 @@
   import 'leaflet-minimap/dist/Control.MiniMap.min.css';
 
   import { get } from 'svelte/store';
-  import { map_store } from '../lib/stores.js';
+  import { appState } from '../AppState.svelte.js';
   import MapPosition from '../components/MapPosition.svelte';
 
   let {
@@ -62,13 +62,13 @@
   }
 
   function mapAction(container) {
-    let map = createMap(container);
-    map_store.set(map);
+    appState.map = createMap(container);
     setMapData(current_result);
 
     return {
       destroy: () => {
-        map_store.set(null);
+        const map = appState.map;
+        appState.map = null;
         map.remove();
       }
     };
@@ -91,7 +91,7 @@
   }
 
   function resetMapData() {
-    let map = get(map_store);
+    let map = appState.map;
     if (!map) { return; }
 
     dataLayers.forEach(function (layer) {
@@ -100,7 +100,7 @@
   }
 
   function setMapData(aFeature) {
-    let map = get(map_store);
+    let map = appState.map;
     if (!map) { return; }
 
     resetMapData();

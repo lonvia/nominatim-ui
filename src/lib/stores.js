@@ -1,7 +1,6 @@
 import { writable } from 'svelte/store';
 import { identifyLinkInQuery } from './helpers.js';
 
-export const map_store = writable();
 export const results_store = writable();
 export const last_api_request_url_store = writable();
 export const error_store = writable();
