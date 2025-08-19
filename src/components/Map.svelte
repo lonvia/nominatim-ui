@@ -11,7 +11,6 @@
 
   let {
     display_minimap = false,
-    current_result = null,
     position_marker = null
   } = $props();
 
@@ -63,7 +62,7 @@
 
   function mapAction(container) {
     appState.map = createMap(container);
-    setMapData(current_result);
+    setMapData(appState.currentResult);
 
     return {
       destroy: () => {
@@ -179,7 +178,7 @@
     }
   }
 
-  $effect(() => { setMapData(current_result); });
+  $effect(() => { setMapData(appState.currentResult); });
 
   function show_map_position_click(e) {
     e.stopPropagation();

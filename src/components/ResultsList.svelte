@@ -1,5 +1,5 @@
 <script>
-  import { results_store } from '../lib/stores.js';
+  import { appState } from '../AppState.svelte.js';
   import { formatLabel } from '../lib/helpers.js';
   import { SvelteURLSearchParams } from 'svelte/reactivity';
 
@@ -7,36 +7,22 @@
   import Welcome from './Welcome.svelte';
   import MapIcon from './MapIcon.svelte';
 
-  let { reverse_search = false, current_result = $bindable() } = $props();
+  let { reverse_search = false } = $props();
 
-  let aSearchResults = $state();
-  let iHighlightNum = $state();
-  let sMoreURL = $state();
+  const sMoreURL = $derived.by(() => {
+    const search_params = new SvelteURLSearchParams(window.location.search);
 
-  results_store.subscribe(data => {
-    if (!data) { return; }
-    aSearchResults = data;
-    iHighlightNum = 0;
-    current_result = aSearchResults[0];
-
-
-    let search_params = new SvelteURLSearchParams(window.location.search);
-
-    let aResults = data;
-    // lonvia wrote: https://github.com/osm-search/nominatim-ui/issues/24
-    // I would suggest to remove the guessing and always show the link. Nominatim only returns
-    // one or two results when it believes the result to be a good enough match.
-    // if (aResults.length >= 10) {
-    var aExcludePlaceIds = [];
+    const aResults = appState.results;
+    let aExcludePlaceIds = [];
     if (search_params.has('exclude_place_ids')) {
       aExcludePlaceIds = search_params.get('exclude_place_ids').split(',');
     }
-    for (var i = 0; i < aResults.length; i += 1) {
+    for (let i = 0; i < aResults.length; i += 1) {
       aExcludePlaceIds.push(aResults[i].place_id);
     }
-    var parsed_url = new SvelteURLSearchParams(window.location.search);
+    const parsed_url = new SvelteURLSearchParams(window.location.search);
     parsed_url.set('exclude_place_ids', aExcludePlaceIds.join(','));
-    sMoreURL = '?' + parsed_url.toString();
+    return '?' + parsed_url.toString();
   });
 
   function handleClick(e) {
@@ -45,21 +31,18 @@
     if (!result_el.className.match('result')) {
       result_el = result_el.parentElement;
     }
-    let pos = Number(result_el.dataset.position);
-
-    current_result = aSearchResults[pos];
-    iHighlightNum = pos;
+    appState.highlightResult(Number(result_el.dataset.position));
   }
 
 </script>
 
-{#if aSearchResults && aSearchResults.length > 0}
+{#if appState.results && appState.results.length > 0}
   <div id="searchresults" role="list">
 
-    {#each aSearchResults as aResult, iResNum}
+    {#each appState.results as aResult, iResNum}
       <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
       <div class="result"
-           class:highlight={iResNum === iHighlightNum}
+           class:highlight={iResNum === appState.resultHighlight}
            role="listitem"
            data-position="{iResNum}"
            onclick={handleClick}
@@ -83,7 +66,7 @@
       </div>
     {/if}
   </div>
-{:else if aSearchResults}
+{:else if appState.results}
   {#if reverse_search}
     <div id="intro" class="sidebar">Search for coordinates or click anywhere on the map.</div>
   {:else}
