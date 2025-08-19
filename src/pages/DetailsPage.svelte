@@ -1,6 +1,7 @@
 <script>
-  import { fetch_from_api, update_html_title } from '../lib/api_utils.js';
+  import { update_html_title } from '../lib/api_utils.js';
   import { page } from '../lib/stores.js';
+  import { appState } from '../AppState.svelte.js';
 
   import {
     osmLink, wikipediaLink, coverageType, isAdminBoundary,
@@ -43,7 +44,7 @@
         update_html_title('Details for ' + api_request_params.osmtype + api_request_params.osmid);
       }
 
-      fetch_from_api('details', api_request_params, function (data) {
+      appState.fetchFromApi('details', api_request_params, function (data) {
         window.scrollTo(0, 0);
         api_request_finished = true;
         aPlace = (data && !data.error) ? data : undefined;

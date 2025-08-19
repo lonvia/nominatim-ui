@@ -1,18 +1,14 @@
 <script>
-  import { error_store } from '../lib/stores.js';
-
-  let error_message = $state();
-
-  error_store.subscribe(text => { error_message = text; });
+  import { appState } from '../AppState.svelte.js';
 
   function dismiss_message() {
-    error_store.set(null);
+    appState.errorMessage = null;
   }
 </script>
 
-{#if error_message}
+{#if appState.errorMessage}
   <div id="error" class="container-fluid alert-danger py-3 px-4">
-    {error_message}
+    {appState.errorMessage}
 
     <button type="button"
             class="btn-close float-end"

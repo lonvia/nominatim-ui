@@ -1,7 +1,7 @@
 <script>
   import { page } from '../lib/stores.js';
   import { appState } from '../AppState.svelte.js';
-  import { fetch_from_api, update_html_title } from '../lib/api_utils.js';
+  import { update_html_title } from '../lib/api_utils.js';
 
   import Header from '../components/Header.svelte';
   import SearchSection from '../components/SearchSection.svelte';
@@ -43,7 +43,7 @@
                                 || api_request_params.postalcode);
 
     if (api_request_params.q || anyStructuredFieldsSet) {
-      fetch_from_api('search', api_request_params, function (data) {
+      appState.fetchFromApi('search', api_request_params, function (data) {
         appState.setResults(data);
 
         if (anyStructuredFieldsSet) {

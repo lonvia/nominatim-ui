@@ -1,7 +1,7 @@
 <script>
   import { page } from '../lib/stores.js';
   import { appState } from '../AppState.svelte.js';
-  import { fetch_from_api, update_html_title } from '../lib/api_utils.js';
+  import { update_html_title } from '../lib/api_utils.js';
 
   import Header from '../components/Header.svelte';
   import SearchSectionReverse from '../components/SearchSectionReverse.svelte';
@@ -26,7 +26,7 @@
 
     if (api_request_params.lat && api_request_params.lon) {
 
-      fetch_from_api('reverse', api_request_params, function (data) {
+      appState.fetchFromApi('reverse', api_request_params, function (data) {
         position_marker = [api_request_params.lat, api_request_params.lon];
         if (data && !data.error) {
           appState.setResults([data]);
